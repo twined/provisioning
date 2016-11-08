@@ -34,6 +34,7 @@ addgroup nginx www-data
 
 cp ${config_dir}/nginx/nginx.conf /etc/nginx/nginx.conf
 cp ${config_dir}/nginx/default /etc/nginx/sites-enabled/default
+cp ${config_dir}/nginx/proxy_params /etc/nginx/proxy_params
 cp ${config_dir}/sshd/sshd_config /etc/ssh/sshd_config
 cp ${config_dir}/fail2ban/alpine-ssh.conf /etc/fail2ban/jail.d/alpine-ssh.conf
 
