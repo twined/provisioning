@@ -1,103 +1,85 @@
 #!/bin/sh
 
-# 1. Create 3 new disks.
-#    a) boot - 256mb
-#    b) swap - 512mb
-#    c) root - remaining
-# 2. Create a config profile using the new disk images, (sda=boot, sdb=root, sdc=swap) GRUB2 as kernel and no Filesystem/Boot helpers
-# 3. Boot into rescue mode with the new disk images (sda=boot, sdb=root, sdc=swap).
-# 4. update-ca-certificates && wget https://raw.githubusercontent.com/twined/provisioning/master/alpine/bootstrap.sh && chmod +x bootstrap.sh && ./bootstrap.sh
-
-set -e
-
-KEYMAP="${KEYMAP:-'us us'}"
 HOST=${HOST:-opal}
 INTERFACES="auto lo
 iface lo inet loopback
-
 auto eth0
 iface eth0 inet dhcp
   hostname $HOST
 "
 
-FEATURES="ata ide scsi virtio base ext4"
-MODULES="ext4"
-
-REL=${REL:-3.5}
-MIRROR=${MIRROR:-http://nl.alpinelinux.org/alpine}
-REPO=$MIRROR/v$REL/main
-APKV=${APKV:-2.6.8-r2}
-
+ALPINE_VER=${ALPINE_VER:-"latest-stable"}
+APK_TOOLS_VER=${APK_TOOLS_VER:-"2.6.7-r0"}
 ARCH=$(uname -m)
+MIRROR="http://nl.alpinelinux.org/alpine"
 
-umount /dev/sda || /bin/true
-umount /dev/sdb || /bin/true
-mkfs.ext4 -L boot /dev/sda
-mkfs.ext4 -L root /dev/sdb
-mkswap /dev/sdc
+BOOT_DEV="/dev/sda"
+ROOT_DEV="/dev/sdb"
+SWAP_DEV="/dev/sdc"
 
-mount /dev/sdb /mnt
-mkdir /mnt/boot
-mount /dev/sda /mnt/boot
+mkdir /alpine
+mount $ROOT_DEV /alpine
+cd /alpine
+mkdir boot
+mount $BOOT_DEV /alpine/boot
 
-curl -s $MIRROR/v$REL/main/$ARCH/apk-tools-static-${APKV}.apk | tar xz
-./sbin/apk.static --repository $REPO --update-cache --allow-untrusted \
-  --root /mnt --initdb add alpine-base
+curl -s $MIRROR/$ALPINE_VER/main/$ARCH/apk-tools-static-${APK_TOOLS_VER}.apk | tar xz
+./sbin/apk.static --repository $MIRROR/$ALPINE_VER/main/ --update-cache --allow-untrusted --root /alpine --initdb add alpine-base alpine-mirrors
 
-cat <<EOF > /mnt/etc/fstab
-/dev/sdb  /       ext4        defaults,noatime    0   0
-/dev/sda  /boot   ext4        defaults,noatime    0   1
-/dev/sdc  swap    swap        defaults            0   0
+cat <<EOF >> /alpine/etc/fstab
+$ROOT_DEV    /   ext4    defaults,noatime    0   0
+$BOOT_DEV    /boot   ext4    defaults,noatime    0  1
+$SWAP_DEV    swap    swap    defaults    0   0
 EOF
-echo $REPO > /mnt/etc/apk/repositories
 
-sed -i '/^tty[0-9]:/d' /mnt/etc/inittab
-echo 'ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100' >> /mnt/etc/inittab
+cat <<EOF > /alpine/etc/inittab
+# /etc/inittab
 
-mkdir -p /mnt/boot/grub
-cat <<EOF > /mnt/boot/grub/grub.cfg
+::sysinit:/sbin/openrc sysinit
+::sysinit:/sbin/openrc boot
+::wait:/sbin/openrc default
+
+# Put a getty on the serial port
+ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+::shutdown:/sbin/openrc shutdown
+EOF
+
+mkdir /alpine/boot/grub
+cat <<EOF > /alpine/boot/grub/grub.cfg
 set root=(hd0)
 set default="Alpine Linux"
 set timeout=0
 
 menuentry "Alpine Linux" {
-    linux /vmlinuz-grsec root=/dev/sdb modules=sd-mod,usb-storage,ext4 console=ttyS0 quiet
-    initrd /initramfs-grsec
+          linux /vmlinuz-grsec root=/dev/sdb modules=sd-mod,usb-storage,ext4 console=ttyS0 quiet
+          initrd /initramfs-grsec
 }
 EOF
 
-cp /etc/resolv.conf /mnt/etc
+mkdir /alpine/etc/mkinitfs
+cat <<EOF > /alpine/etc/mkinitfs/mkinitfs.conf
+features="ata ide scsi virtio base ext4"
+EOF
 
-echo ttyS0 >> /mnt/etc/securetty
+cp /etc/resolv.conf /alpine/etc
 
-mount --bind /proc /mnt/proc
-mount --bind /dev /mnt/dev
+echo ttyS0 >> /alpine/etc/securetty
 
-chroot /mnt /bin/sh<<CHROOT
-apk update --quiet
+mount --bind /proc /alpine/proc
+mount --bind /dev /alpine/dev
 
+chroot /alpine /bin/sh<<CHROOT
+setup-apkrepos -f
+apk update
 setup-hostname -n $HOST
 printf "$INTERFACES" | setup-interfaces -i
-
 rc-update add networking boot
 rc-update add urandom boot
-rc-update add crond
-
-apk add openssh
-rc-update add sshd default
-
-mkdir /etc/mkinitfs
-echo features=\""$FEATURES"\" > /etc/mkinitfs/mkinitfs.conf
-
+rc-update add cron
 apk add linux-grsec
-
 CHROOT
-
-umount /mnt/proc
-umount /mnt/dev
-umount /mnt/boot
-umount /mnt
-
-echo "== Bootstrap finished. Type reboot to reboot system"
-
-# reboot
