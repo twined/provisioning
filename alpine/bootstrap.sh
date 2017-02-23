@@ -103,6 +103,6 @@ umount $ROOT/proc
 umount $ROOT/boot
 umount $ROOT
 
-echo "== Bootstrap finished. Rebooting now."
+echo "== Bootstrap finished. Type reboot to reboot system"
 
-reboot
+# reboot
