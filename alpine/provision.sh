@@ -65,7 +65,9 @@ rc-update add supervisord
 adduser ${user}
 usermod -s /bin/zsh ${user}
 usermod -aG wheel ${user}
+usermod -aG www-data ${user}
 cp ${config_dir}/zsh/zshrc /home/${user}/.zshrc
+chown ${user}:${user} /home/${user}/.zshrc
 echo "${user}    ALL=(ALL) ALL" >> /etc/sudoers
 
 # iptables

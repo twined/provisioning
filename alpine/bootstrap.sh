@@ -83,5 +83,9 @@ printf "$INTERFACES" | setup-interfaces -i
 rc-update add networking boot
 rc-update add urandom boot
 rc-update add crond
+
+apk add openssh
+rc-update add sshd default
+
 apk add linux-grsec
 CHROOT
