@@ -4,7 +4,7 @@
 #    a) boot - 256mb
 #    b) swap - 512mb
 #    c) root - remaining
-# 2. Create a config profile using the new disk images, (sda=boot, sdb=root, sdc=swap) GRUB2 and no Filesystem/Boot helpers
+# 2. Create a config profile using the new disk images, (sda=boot, sdb=root, sdc=swap) GRUB2 as kernel and no Filesystem/Boot helpers
 # 3. Boot into rescue mode with the new disk images (sda=boot, sdb=root, sdc=swap).
 # 4. update-ca-certificates && wget https://raw.githubusercontent.com/twined/provisioning/master/alpine/bootstrap.sh && chmod +x bootstrap.sh && ./bootstrap.sh
 
@@ -25,10 +25,10 @@ ROOT_FS=${ROOT_FS:-ext4}
 FEATURES="ata ide scsi virtio base $ROOT_FS"
 MODULES="$ROOT_FS"
 
-REL=${REL:-3.4}
+REL=${REL:-3.5}
 MIRROR=${MIRROR:-http://nl.alpinelinux.org/alpine}
 REPO=$MIRROR/v$REL/main
-APKV=${APKV:-2.6.7-r0}
+APKV=${APKV:-2.6.8-r2}
 BOOT_DEV=${BOOT_DEV:-/dev/sda}
 ROOT_DEV=${ROOT_DEV:-/dev/sdb}
 SWAP_DEV=${SWAP_DEV:-/dev/sdc}

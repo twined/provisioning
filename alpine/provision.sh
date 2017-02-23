@@ -48,11 +48,11 @@ rc-update add fail2ban
 # postgres
 mkdir /var/lib/postgresql
 chown postgres /var/lib/postgresql
-sudo -u postgres initdb -D /var/lib/postgresql/9.5/data
+sudo -u postgres initdb -D /var/lib/postgresql/9.6/data
 rc-update add postgres
 
-cp ${config_dir}/postgres/postgresql.conf /var/lib/postgresql/9.5/data/postgresql.conf
-chown postgres /var/lib/postgresql/9.5/data/postgresql.conf
+cp ${config_dir}/postgres/postgresql.conf /var/lib/postgresql/9.6/data/postgresql.conf
+chown postgres /var/lib/postgresql/9.6/data/postgresql.conf
 /etc/init.d/postgres start
 
 # supervisor

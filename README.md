@@ -16,9 +16,12 @@
     $ cd ~ && wget https://github.com/twined/provisioning/archive/master.tar.gz && tar xvf master.tar.gz
     $ cd ~/provisioning-master/alpine && chmod +x provision.sh && ./provision.sh
     $ su twined
-    $ mkdir -p ~/.ssh
-    $ nano authorized_keys
+    $ mkdir -p ~/.ssh && cd ~/.ssh && nano authorized_keys
 
     Paste in your local machine's ~/.ssh/id_rsa.pub. Make sure there are no newlines
 
     $ chmod 600 authorized_keys
+
+Now exit the shell, and try to ssh from your local machine
+
+    $ ssh -p 30000 twined@<ip>
