@@ -17,6 +17,8 @@ BOOT_DEV="/dev/sda"
 ROOT_DEV="/dev/sdb"
 SWAP_DEV="/dev/sdc"
 
+
+
 mkdir /alpine
 mount $ROOT_DEV /alpine
 cd /alpine
@@ -80,6 +82,6 @@ setup-hostname -n $HOST
 printf "$INTERFACES" | setup-interfaces -i
 rc-update add networking boot
 rc-update add urandom boot
-rc-update add cron
+rc-update add crond
 apk add linux-grsec
 CHROOT
