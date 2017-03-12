@@ -24,7 +24,7 @@ apk --update upgrade
 
 # Extra stuff
 
-apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-client zsh
+apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-contrib postgresql-client zsh
 apk add imagemagick pngquant@edge libjpeg-turbo-utils gifsicle@edge
 
 mkdir /etc/nginx/sites-available
