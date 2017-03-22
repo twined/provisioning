@@ -14,6 +14,16 @@ if [ -e ${tmpfile} ]; then
   exit 0
 fi
 
+# modules hack
+wget http://ftp.de.debian.org/debian/pool/main/l/linux/linux-image-3.16.0-4-amd64_3.16.7-ckt25-2_amd64.deb
+apk add dpkg
+apk add tar
+dpkg-deb -x linux-image-3.16.0-4-amd64_3.16.7-ckt25-2_amd64.deb /tmp/out/
+mv /tmp/out/lib/modules/ /lib/
+depmod -a
+rm linux-image-3.16.0-4-amd64_3.16.7-ckt25-2_amd64.deb
+rm /tmp/out/ -fr
+
 # Add repos
 echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
 echo "@edge http://nl.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
