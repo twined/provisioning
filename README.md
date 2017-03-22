@@ -3,6 +3,7 @@
 *For digital ocean*
 
 Follow instructions from https://github.com/eskin/digitalocean-alpine
+Kernel: Debian 8.0 x64 vmlinuz-3.16.0-4-amd64 (3.16.7-ckt9-3~deb8u1)
 
 *In alpine as root:*
 
