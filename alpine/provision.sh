@@ -7,7 +7,7 @@
 
 user="twined"
 tmpfile="/.twined/runonce"
-config_dir="/root/provisioning-master"
+config_dir="/root/provisioning-digitalocean"
 
 if [ -e ${tmpfile} ]; then
   echo "Provisioning already completed. Remove ${tmpfile} to run it again."
@@ -34,6 +34,7 @@ mkdir /etc/nginx/sites-enabled
 
 addgroup nginx www-data
 
+cp ${config_dir}/networking/networking /etc/init.d/networking
 cp ${config_dir}/nginx/nginx.conf /etc/nginx/nginx.conf
 cp ${config_dir}/nginx/default /etc/nginx/sites-enabled/default
 cp ${config_dir}/nginx/proxy_params /etc/nginx/proxy_params
