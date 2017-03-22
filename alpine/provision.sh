@@ -52,11 +52,11 @@ rc-update add fail2ban
 mkdir /var/lib/postgresql
 chown postgres /var/lib/postgresql
 sudo -u postgres initdb -D /var/lib/postgresql/9.6/data
-rc-update add postgres
+rc-update add postgresql
 
 cp ${config_dir}/postgres/postgresql.conf /var/lib/postgresql/9.6/data/postgresql.conf
 chown postgres /var/lib/postgresql/9.6/data/postgresql.conf
-/etc/init.d/postgres start
+/etc/init.d/postgresql start
 
 # supervisor
 mkdir -p /etc/supervisor/conf.d
@@ -76,7 +76,7 @@ echo "${user}    ALL=(ALL) ALL" >> /etc/sudoers
 # iptables
 rc-update add iptables
 /etc/init.d/iptables save
-cp &{config_dir}/iptables/v4 /etc/iptables/rules-save
+cp ${config_dir}/iptables/v4 /etc/iptables/rules-save
 iptables-restore < /etc/iptables/rules-save
 /etc/init.d/iptables start
 
