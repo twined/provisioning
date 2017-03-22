@@ -1,14 +1,8 @@
 # Server provisioning scripts
 
-*In linode manager:*
+*For digital ocean*
 
-  1. Create 3 new disks.
-    a) boot - 256mb
-    b) swap - 512mb
-    c) root - remaining
-  2. Create a config profile using the new disk images, (sda=boot, sdb=root, sdc=swap) GRUB2 and no Filesystem/Boot helpers
-  3. Boot into rescue mode with the new disk images (sda=boot, sdb=root, sdc=swap).
-  4. update-ca-certificates && wget -N  https://raw.githubusercontent.com/twined/provisioning/master/alpine/bootstrap.sh && chmod +x bootstrap.sh && ./bootstrap.sh
+Follow instructions from https://github.com/eskin/digitalocean-alpine
 
 *In alpine as root:*
 

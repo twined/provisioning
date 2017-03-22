@@ -22,8 +22,10 @@ echo "@edge http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositor
 # Upgrade Alpine and base packages
 apk --update upgrade
 
-# Extra stuff
+# grsec
+apk add linux-grsec
 
+# Extra stuff
 apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-contrib postgresql-client zsh
 apk add imagemagick pngquant@edge libjpeg-turbo-utils gifsicle@edge
 
@@ -78,8 +80,10 @@ iptables-restore < /etc/iptables/rules-save
 /etc/init.d/iptables start
 
 # run alpine setup
-setup-alpine
+# setup-alpine
 
 # mark as provisioned
 mkdir -p /.twined
 touch ${tmpfile}
+
+echo "done. did not run setup-alpine"
