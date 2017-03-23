@@ -36,7 +36,7 @@ apk --update upgrade
 # apk add linux-grsec
 
 # Extra stuff
-apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-contrib postgresql-client zsh
+apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-contrib postgresql-client zsh openssl
 apk add imagemagick pngquant@edge libjpeg-turbo-utils gifsicle@edge
 
 mkdir /etc/nginx/sites-available
@@ -50,6 +50,8 @@ cp ${config_dir}/nginx/default /etc/nginx/sites-enabled/default
 cp ${config_dir}/nginx/proxy_params /etc/nginx/proxy_params
 cp ${config_dir}/sshd/sshd_config /etc/ssh/sshd_config
 cp ${config_dir}/fail2ban/alpine-ssh.conf /etc/fail2ban/jail.d/alpine-ssh.conf
+
+chmod +x /etc/init.d/networking
 
 rc-update add nginx
 rc-update add fail2ban
@@ -89,6 +91,14 @@ rc-update add iptables
 cp ${config_dir}/iptables/v4 /etc/iptables/rules-save
 iptables-restore < /etc/iptables/rules-save
 /etc/init.d/iptables start
+
+# copy ssh key
+
+mkdir -p /home/twined/.ssh
+cp /root/.ssh/authorized_keys /home/twined/.ssh
+chown -R twined:twined /home/twined/.ssh
+chmod 700 /home/twined/.ssh
+chmod 600 /home/twined/.ssh/authorized_keys
 
 # run alpine setup
 # setup-alpine
