@@ -36,7 +36,7 @@ apk --update upgrade
 # apk add linux-grsec
 
 # Extra stuff
-apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-contrib postgresql-client zsh openssl
+apk add shadow@edge util-linux fail2ban bash htop wget curl git sudo nano supervisor nginx postgresql postgresql-contrib postgresql-client zsh openssl py2-pip
 apk add imagemagick pngquant@edge libjpeg-turbo-utils gifsicle@edge
 
 mkdir /etc/nginx/sites-available
@@ -102,6 +102,9 @@ chmod 600 /home/twined/.ssh/authorized_keys
 
 # run alpine setup
 # setup-alpine
+
+# install backblaze client
+pip install b2
 
 # mark as provisioned
 mkdir -p /.twined
