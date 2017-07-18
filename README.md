@@ -14,3 +14,7 @@ Kernel: Debian 8.0 x64 vmlinuz-3.16.0-4-amd64 (3.16.7-ckt9-3~deb8u1)
 Now exit the shell, and try to ssh from your local machine
 
     $ ssh -p 30000 twined@<ip>
+
+*App/database splits*
+
+There are `provision-app.sh` and `provision-db.sh` scripts available as well.

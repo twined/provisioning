@@ -1,0 +1,35 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:f2b-sshd - [0:0]
+:f2b-sshd-ddos - [0:0]
+
+# Allow all loopback (lo0) traffic and reject traffic
+# to localhost that does not originate from lo0.
+-A INPUT -i lo -j ACCEPT
+-A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
+
+# Allow ping.
+-A INPUT -p icmp -m state --state NEW --icmp-type 8 -j ACCEPT
+
+# fail2ban ssh
+-A INPUT -p tcp -m multiport --dports 30000 -j f2b-sshd-ddos
+-A INPUT -p tcp -m multiport --dports 30000 -j f2b-sshd
+
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 30000 -j ACCEPT
+
+# Allow inbound traffic from established connections.
+# This includes ICMP error returns.
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+-A f2b-sshd -j RETURN
+-A f2b-sshd-ddos -j RETURN
+
+# Reject all traffic forwarding.
+-A FORWARD -j REJECT
+
+# Reject all other inbound.
+-A INPUT -j REJECT
+
+COMMIT
